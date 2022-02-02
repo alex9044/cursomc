@@ -1,7 +1,6 @@
 package com.alexmoscato.cursomc;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +13,7 @@ import com.alexmoscato.cursomc.domain.Cidade;
 import com.alexmoscato.cursomc.domain.Cliente;
 import com.alexmoscato.cursomc.domain.Endereco;
 import com.alexmoscato.cursomc.domain.Estado;
+import com.alexmoscato.cursomc.domain.ItemPedido;
 import com.alexmoscato.cursomc.domain.Pagamento;
 import com.alexmoscato.cursomc.domain.PagamentoComBoleto;
 import com.alexmoscato.cursomc.domain.PagamentoComCartao;
@@ -26,6 +26,7 @@ import com.alexmoscato.cursomc.repositories.CidadeRepository;
 import com.alexmoscato.cursomc.repositories.ClienteRepository;
 import com.alexmoscato.cursomc.repositories.EnderecoRepository;
 import com.alexmoscato.cursomc.repositories.EstadoRepository;
+import com.alexmoscato.cursomc.repositories.ItemPedidoRepository;
 import com.alexmoscato.cursomc.repositories.PagamentoRepository;
 import com.alexmoscato.cursomc.repositories.PedidoRepository;
 import com.alexmoscato.cursomc.repositories.ProdutoRepository;
@@ -49,6 +50,8 @@ public class CursomcApplication implements CommandLineRunner{
 	private PedidoRepository pedidoRepository;
 	@Autowired
 	private PagamentoRepository pagamentoRepository;
+	@Autowired
+	private ItemPedidoRepository itemPedidoRepository;
 	
 	
 	public static void main(String[] args) {
@@ -130,12 +133,27 @@ public class CursomcApplication implements CommandLineRunner{
  		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, sdf.parse("20/10/2017 00:00"), null);
  		ped2.setPagamento(pagto2);
  		
+ 		
 		//Salvando Pedidos no repositorio
 		pedidoRepository.saveAll(Arrays.asList(ped1,ped2));
 		//Salvando Pagamentos no repositorio
 		pagamentoRepository.saveAll(Arrays.asList(pagto1,pagto2));
+		
+		//Instanciando objetos ItemPedido
+		ItemPedido ip1 = new ItemPedido(ped1, prod1, 0.00, 1, 2000.00);
+		ItemPedido ip2 = new ItemPedido(ped1, prod3, 0.00, 2, 80.00);
+		ItemPedido ip3 = new ItemPedido(ped2, prod2, 100.00, 1, 800.00);
+		
+		//Adicionando items aos pedidos 
+		ped1.getItens().addAll(Arrays.asList(ip1,ip2));
+		ped2.getItens().addAll(Arrays.asList(ip3));
+		
+		//Adicionando items aos produtos 
+		prod1.getItens().addAll(Arrays.asList(ip1));
+		prod2.getItens().addAll(Arrays.asList(ip3));
+		prod3.getItens().addAll(Arrays.asList(ip2));	
+		
+		//Salvando pedidos no repositorio
+		itemPedidoRepository.saveAll(Arrays.asList(ip1,ip2,ip3));
 	}
-	
-	
-
 }
