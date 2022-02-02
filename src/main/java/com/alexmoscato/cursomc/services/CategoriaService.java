@@ -3,6 +3,7 @@ package com.alexmoscato.cursomc.services;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.alexmoscato.cursomc.domain.Categoria;
@@ -32,5 +33,15 @@ public class CategoriaService {
 	public Categoria update(Categoria obj) {
 		findId(obj.getId());
 		return repository.save(obj);
+	}
+	
+	//Método para deletar uma categoria.
+	public void delete(Integer id) {
+		findId(id);
+		try {
+			repository.deleteById(id); 
+		} catch (DataIntegrityViolationException e) {
+			throw new DataIntegrityException("Não é possivel excluir uma categoria que possui produtos associados");
+		}
 	}
 }
