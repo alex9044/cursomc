@@ -11,7 +11,7 @@ import com.alexmoscato.cursomc.domain.Cliente;
 import com.alexmoscato.cursomc.services.ClienteService;
 
 @RestController
-@RequestMapping(value = "/clientes")
+@RequestMapping(value = "/clientes") // Uri de dominio da coleção 
 public class ClienteResource {
 	
 	@Autowired 

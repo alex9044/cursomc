@@ -14,8 +14,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import com.alexmoscato.cursomc.domain.Categoria;
 import com.alexmoscato.cursomc.services.CategoriaService;
 
-@RestController
-@RequestMapping(value = "/categorias")
+@RestController 
+@RequestMapping(value = "/categorias") // Uri de dominio da coleção 
 public class CategoriaResource {
 	
 	@Autowired 
@@ -24,7 +24,7 @@ public class CategoriaResource {
 	
 	//Criando uri para consultar uma categoria 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public ResponseEntity<?> find(@PathVariable Integer id) {
+	public ResponseEntity<Categoria> find(@PathVariable Integer id) {
 		Categoria objeto = service.findId(id);
 		return ResponseEntity.ok().body(objeto);
 	}
@@ -36,6 +36,14 @@ public class CategoriaResource {
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{id}").buildAndExpand(objeto.getId()).toUri();
 		return ResponseEntity.created(uri).build();
+	}
+	
+	//Crindo uri para atualizar uma categoria
+	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+	public ResponseEntity<Void> update(@RequestBody Categoria objeto, @PathVariable Integer id){
+		objeto.setId(id);
+		objeto = service.update(objeto);
+		return ResponseEntity.noContent().build();
 	}
 	
 }

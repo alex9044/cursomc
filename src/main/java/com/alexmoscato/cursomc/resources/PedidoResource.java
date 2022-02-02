@@ -11,14 +11,15 @@ import com.alexmoscato.cursomc.domain.Pedido;
 import com.alexmoscato.cursomc.services.PedidoService;
 
 @RestController
-@RequestMapping(value = "/pedidos")
+@RequestMapping(value = "/pedidos") // Uri de dominio da coleção 
 public class PedidoResource {
 	
 	@Autowired 
 	private PedidoService service;
 	
+	//Método para buscar um pedido por Id.
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	public ResponseEntity<?> find(@PathVariable Integer id) {
+	public ResponseEntity<Pedido> find(@PathVariable Integer id) {
 		Pedido objeto = service.findId(id);
 		return ResponseEntity.ok().body(objeto);
 	}

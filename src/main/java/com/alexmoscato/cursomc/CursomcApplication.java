@@ -140,7 +140,7 @@ public class CursomcApplication implements CommandLineRunner{
 		pagamentoRepository.saveAll(Arrays.asList(pagto1,pagto2));
 		
 		//Instanciando objetos ItemPedido
-		ItemPedido ip1 = new ItemPedido(ped1, prod1, 0.00, 1, 2000.00);
+		ItemPedido ip1 = new ItemPedido(ped1, prod1, 0.00, 1, 2000.00); 
 		ItemPedido ip2 = new ItemPedido(ped1, prod3, 0.00, 2, 80.00);
 		ItemPedido ip3 = new ItemPedido(ped2, prod2, 100.00, 1, 800.00);
 		
