@@ -3,6 +3,7 @@ package com.alexmoscato.cursomc.domain;
 import java.util.Date;
 
 import javax.persistence.Entity;
+
 import com.alexmoscato.cursomc.domain.enums.EstadoPagamento;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
