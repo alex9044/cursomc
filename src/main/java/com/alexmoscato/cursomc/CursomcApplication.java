@@ -1,5 +1,7 @@
 package com.alexmoscato.cursomc;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +14,20 @@ import com.alexmoscato.cursomc.domain.Cidade;
 import com.alexmoscato.cursomc.domain.Cliente;
 import com.alexmoscato.cursomc.domain.Endereco;
 import com.alexmoscato.cursomc.domain.Estado;
+import com.alexmoscato.cursomc.domain.Pagamento;
+import com.alexmoscato.cursomc.domain.PagamentoComBoleto;
+import com.alexmoscato.cursomc.domain.PagamentoComCartao;
+import com.alexmoscato.cursomc.domain.Pedido;
 import com.alexmoscato.cursomc.domain.Produto;
+import com.alexmoscato.cursomc.domain.enums.EstadoPagamento;
 import com.alexmoscato.cursomc.domain.enums.TipoCliente;
 import com.alexmoscato.cursomc.repositories.CategoriaRepository;
 import com.alexmoscato.cursomc.repositories.CidadeRepository;
 import com.alexmoscato.cursomc.repositories.ClienteRepository;
 import com.alexmoscato.cursomc.repositories.EnderecoRepository;
 import com.alexmoscato.cursomc.repositories.EstadoRepository;
+import com.alexmoscato.cursomc.repositories.PagamentoRepository;
+import com.alexmoscato.cursomc.repositories.PedidoRepository;
 import com.alexmoscato.cursomc.repositories.ProdutoRepository;
 
 @SpringBootApplication
@@ -36,6 +45,10 @@ public class CursomcApplication implements CommandLineRunner{
 	private ClienteRepository clienteRepository;
 	@Autowired
 	private EnderecoRepository enderecoRepository;
+	@Autowired
+	private PedidoRepository pedidoRepository;
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
 	
 	
 	public static void main(String[] args) {
@@ -86,6 +99,7 @@ public class CursomcApplication implements CommandLineRunner{
  		cli1.getEnderecos().addAll(Arrays.asList(e1,e2));
  		
  		
+ 		
 		//Salvando Categorias no repositorio 
 		categoriaRepository.saveAll(Arrays.asList(cat1,cat2));
 		//Salvando Produtos no repositorio 
@@ -98,6 +112,28 @@ public class CursomcApplication implements CommandLineRunner{
 		clienteRepository.saveAll(Arrays.asList(cli1));
 		//Salvando Enderecos no repositorio
 		enderecoRepository.saveAll(Arrays.asList(e1,e2));
+		
+		
+		//Mascara de Data 
+ 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm");
+ 		
+ 		//Instanciando objetos pedidos
+ 		Pedido ped1 = new Pedido(null, sdf.parse("30/09/2017 10:32"), cli1, e1);
+ 		Pedido ped2 = new Pedido(null, sdf.parse("10/10/2017 19:35"), cli1, e2);
+ 		
+ 		//Adicionando pedidos aos clientes 
+ 		cli1.getPedidos().addAll(Arrays.asList(ped1, ped2));
+ 		
+ 		//Instanciando Pagamento e adiconando aos pedidos 
+ 		Pagamento pagto1 = new PagamentoComCartao(null, EstadoPagamento.QUITADO, ped1, 6);
+ 		ped1.setPagamento(pagto1);
+ 		Pagamento pagto2 = new PagamentoComBoleto(null, EstadoPagamento.PENDENTE, ped2, sdf.parse("20/10/2017 00:00"), null);
+ 		ped2.setPagamento(pagto2);
+ 		
+		//Salvando Pedidos no repositorio
+		pedidoRepository.saveAll(Arrays.asList(ped1,ped2));
+		//Salvando Pagamentos no repositorio
+		pagamentoRepository.saveAll(Arrays.asList(pagto1,pagto2));
 	}
 	
 	
