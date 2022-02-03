@@ -15,7 +15,7 @@ import com.alexmoscato.cursomc.services.PedidoService;
 public class PedidoResource {
 	
 	@Autowired 
-	private PedidoService service;
+	private PedidoService service; // Instanciação da classe de serviços.
 	
 	//Método para buscar um pedido por Id.
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)

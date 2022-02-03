@@ -1,5 +1,6 @@
 package com.alexmoscato.cursomc.services;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.alexmoscato.cursomc.domain.Categoria;
+import com.alexmoscato.cursomc.dtos.CategoriaDTO;
 import com.alexmoscato.cursomc.repositories.CategoriaRepository;
 import com.alexmoscato.cursomc.services.exceptions.*;
 
@@ -43,5 +45,10 @@ public class CategoriaService {
 		} catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possivel excluir uma categoria que possui produtos associados");
 		}
+	}
+	
+	//Método para listar todas as categorias.
+	public List<Categoria> findAll(){
+		return repository.findAll();
 	}
 }

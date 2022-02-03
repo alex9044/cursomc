@@ -15,7 +15,7 @@ import com.alexmoscato.cursomc.services.ClienteService;
 public class ClienteResource {
 	
 	@Autowired 
-	private ClienteService service;
+	private ClienteService service; // Instanciação da classe de serviços.
 	
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Cliente> find(@PathVariable Integer id) {
