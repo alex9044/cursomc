@@ -4,9 +4,12 @@ import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -57,7 +60,8 @@ public class CategoriaResource {
 
 	// Crindo uri para inserir uma nova categoria
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Void> insert(@RequestBody Categoria objeto) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody CategoriaDTO objetoDTO) {
+		Categoria objeto = service.fromDTO(objetoDTO);
 		objeto = service.insert(objeto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(objeto.getId()).toUri();
 		return ResponseEntity.created(uri).build();
@@ -65,7 +69,8 @@ public class CategoriaResource {
 
 	// Crindo uri para atualizar uma categoria
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-	public ResponseEntity<Void> update(@RequestBody Categoria objeto, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@Valid @RequestBody CategoriaDTO objetoDTO, @PathVariable Integer id) {
+		Categoria objeto = service.fromDTO(objetoDTO);
 		objeto.setId(id);
 		objeto = service.update(objeto);
 		return ResponseEntity.noContent().build();
@@ -77,5 +82,7 @@ public class CategoriaResource {
 		service.delete(id);
 		return ResponseEntity.noContent().build();
 	}
+	
+	
 
 }
