@@ -10,9 +10,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.alexmoscato.cursomc.domain.Categoria;
+import com.alexmoscato.cursomc.domain.Cidade;
 import com.alexmoscato.cursomc.domain.Cliente;
+import com.alexmoscato.cursomc.domain.Endereco;
+import com.alexmoscato.cursomc.domain.enums.TipoCliente;
 import com.alexmoscato.cursomc.dtos.ClienteDTO;
+import com.alexmoscato.cursomc.dtos.ClienteNewDTO;
 import com.alexmoscato.cursomc.repositories.ClienteRepository;
+import com.alexmoscato.cursomc.repositories.EnderecoRepository;
 import com.alexmoscato.cursomc.services.exceptions.DataIntegrityException;
 import com.alexmoscato.cursomc.services.exceptions.ObjectNotFoundException;
 
@@ -21,12 +27,23 @@ public class ClienteService {
 
 	@Autowired
 	private ClienteRepository repository;
+	
+	@Autowired
+	private EnderecoRepository enderecoRepository;
 
 	// Método para buscar um cliente por Id.
 	public Cliente findId(Integer id) {
 		Optional<Cliente> objeto = repository.findById(id);
 		return objeto.orElseThrow(() -> new ObjectNotFoundException(
 				"Objeto não encontrado! Id: " + id + ", Tipo: " + Cliente.class.getName()));
+	}
+
+	// Método para persistir um novo Cliente
+	public Cliente insert(Cliente obj) {
+		obj.setId(null);
+		obj = repository.save(obj);
+		enderecoRepository.saveAll(obj.getEnderecos());
+		return obj;
 	}
 
 	// Método para atualizar um clientes
@@ -57,12 +74,30 @@ public class ClienteService {
 		return repository.findAll(pageRequest);
 	}
 
-	// Método para criar um objeto categoria apartir de um objeto categoria DTO.
+	// Método para criar um objeto categoria apartir de um objeto cliente DTO.
 	public Cliente fromDTO(ClienteDTO objDTO) {
 		return new Cliente(objDTO.getId(), objDTO.getNome(), objDTO.getEmail(), null, null);
 	}
-	
-	// Método para atualizar um objeto do banco de dados apartir de um objeto passado por parametro
+
+	public Cliente fromNewDTO(ClienteNewDTO objDTO) {
+		Cliente cli = new Cliente(null, objDTO.getNome(), objDTO.getEmail(), objDTO.getCpfOucnpj(),
+				TipoCliente.toEnum(objDTO.getTipoCliente()));
+		Cidade cid = new Cidade(objDTO.getCidadeId(), null, null);
+		Endereco end = new Endereco(null, objDTO.getLogradouro(), objDTO.getNumero(), objDTO.getComplemento(),
+				objDTO.getBairro(), objDTO.getCep(), cli, cid);
+		cli.getEnderecos().add(end);
+		cli.getTelefones().add(objDTO.getTelefone1());
+		if (objDTO.getTelefone2() != null) {
+			cli.getTelefones().add(objDTO.getTelefone2());
+		}
+		if (objDTO.getTelefone3() != null) {
+			cli.getTelefones().add(objDTO.getTelefone3());
+		}
+		return cli;
+	}
+
+	// Método para atualizar um objeto do banco de dados apartir de um objeto
+	// passado por parametro
 	private void updateData(Cliente newObj, Cliente obj) {
 		newObj.setNome(obj.getNome());
 		newObj.setEmail(obj.getEmail());
