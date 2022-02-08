@@ -11,57 +11,65 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.alexmoscato.cursomc.domain.Categoria;
+import com.alexmoscato.cursomc.domain.Cliente;
 import com.alexmoscato.cursomc.dtos.CategoriaDTO;
 import com.alexmoscato.cursomc.repositories.CategoriaRepository;
 import com.alexmoscato.cursomc.services.exceptions.*;
 
 @Service
 public class CategoriaService {
-	
+
 	@Autowired
 	private CategoriaRepository repository;
-	
-	//Method para buscar uma categoria por Id.
-	public Categoria findId(Integer id){
-		Optional<Categoria> objeto = repository.findById(id); 
-		return objeto.orElseThrow(() -> 
-			new ObjectNotFoundException("Objeto não encontrado! ID:"+id+", tipo: " +Categoria.class.getName()));
-	} 
-	
-	//Método para persistir uma nova Categoria
+
+	// Method para buscar uma categoria por Id.
+	public Categoria findId(Integer id) {
+		Optional<Categoria> objeto = repository.findById(id);
+		return objeto.orElseThrow(() -> new ObjectNotFoundException(
+				"Objeto não encontrado! ID:" + id + ", tipo: " + Categoria.class.getName()));
+	}
+
+	// Método para persistir uma nova Categoria
 	public Categoria insert(Categoria obj) {
 		obj.setId(null);
 		return repository.save(obj);
 	}
-	
-	//Método para atualizar uma categoria
+
+	// Método para atualizar uma categoria
 	public Categoria update(Categoria obj) {
-		findId(obj.getId());
-		return repository.save(obj);
+		Categoria newObj = findId(obj.getId());
+		updateData(newObj, obj);
+		return repository.save(newObj);
 	}
-	
-	//Método para deletar uma categoria.
+
+	// Método para atualizar um objeto do banco de dados apartir de um objeto
+	// passado por parametro
+	private void updateData(Categoria newObj, Categoria obj) {
+		newObj.setNome(obj.getNome());
+	}
+
+	// Método para deletar uma categoria.
 	public void delete(Integer id) {
 		findId(id);
 		try {
-			repository.deleteById(id); 
+			repository.deleteById(id);
 		} catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possivel excluir uma categoria que possui produtos associados");
 		}
 	}
-	
-	//Método para listar todas as categorias.
-	public List<Categoria> findAll(){
+
+	// Método para listar todas as categorias.
+	public List<Categoria> findAll() {
 		return repository.findAll();
 	}
-	
-	//Método para listar uma page de Categiorias.
-	public  Page<Categoria> findPage(Integer page, Integer linesPerPage, String orderBy, String direction){
+
+	// Método para listar uma page de Categiorias.
+	public Page<Categoria> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
 		PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
 		return repository.findAll(pageRequest);
 	}
-	
-	//Método para criar um objeto categoria apartir de um objeto categoria DTO.
+
+	// Método para criar um objeto categoria apartir de um objeto categoria DTO.
 	public Categoria fromDTO(CategoriaDTO objDTO) {
 		return new Categoria(objDTO.getId(), objDTO.getNome());
 	}
