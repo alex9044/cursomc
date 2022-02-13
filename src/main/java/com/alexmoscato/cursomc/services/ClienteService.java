@@ -3,6 +3,8 @@ package com.alexmoscato.cursomc.services;
 import java.util.List;
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -10,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
-import com.alexmoscato.cursomc.domain.Categoria;
 import com.alexmoscato.cursomc.domain.Cidade;
 import com.alexmoscato.cursomc.domain.Cliente;
 import com.alexmoscato.cursomc.domain.Endereco;
@@ -39,6 +40,7 @@ public class ClienteService {
 	}
 
 	// Método para persistir um novo Cliente
+	@Transactional
 	public Cliente insert(Cliente obj) {
 		obj.setId(null);
 		obj = repository.save(obj);
@@ -46,7 +48,7 @@ public class ClienteService {
 		return obj;
 	}
 
-	// Método para atualizar um clientes
+	// Método para atualizar um cliente
 	public Cliente update(Cliente obj) {
 		Cliente newObj = findId(obj.getId());
 		updateData(newObj, obj);
@@ -59,7 +61,7 @@ public class ClienteService {
 		try {
 			repository.deleteById(id);
 		} catch (DataIntegrityViolationException e) {
-			throw new DataIntegrityException("Não é possivel excluir um cliente que possui pedidos associados");
+			throw new DataIntegrityException("Não é possivel excluir um cliente que possui pedidos associados"); 
 		}
 	}
 
@@ -74,13 +76,13 @@ public class ClienteService {
 		return repository.findAll(pageRequest);
 	}
 
-	// Método para criar um objeto categoria apartir de um objeto cliente DTO.
+	// Método para criar um objeto cliente apartir de um objeto cliente DTO.
 	public Cliente fromDTO(ClienteDTO objDTO) {
 		return new Cliente(objDTO.getId(), objDTO.getNome(), objDTO.getEmail(), null, null);
 	}
 
 	public Cliente fromNewDTO(ClienteNewDTO objDTO) {
-		Cliente cli = new Cliente(null, objDTO.getNome(), objDTO.getEmail(), objDTO.getCpfOucnpj(),
+		Cliente cli = new Cliente(null, objDTO.getNome(), objDTO.getEmail(), objDTO.getCpfOuCnpj(),
 				TipoCliente.toEnum(objDTO.getTipoCliente()));
 		Cidade cid = new Cidade(objDTO.getCidadeId(), null, null);
 		Endereco end = new Endereco(null, objDTO.getLogradouro(), objDTO.getNumero(), objDTO.getComplemento(),
@@ -93,6 +95,8 @@ public class ClienteService {
 		if (objDTO.getTelefone3() != null) {
 			cli.getTelefones().add(objDTO.getTelefone3());
 		}
+
+		System.out.println(""+cli.getTipoCliente());
 		return cli;
 	}
 

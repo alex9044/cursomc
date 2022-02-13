@@ -11,7 +11,6 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import com.alexmoscato.cursomc.domain.Categoria;
-import com.alexmoscato.cursomc.domain.Cliente;
 import com.alexmoscato.cursomc.dtos.CategoriaDTO;
 import com.alexmoscato.cursomc.repositories.CategoriaRepository;
 import com.alexmoscato.cursomc.services.exceptions.*;
