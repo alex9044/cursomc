@@ -13,7 +13,8 @@ import org.springframework.stereotype.Service;
 import com.alexmoscato.cursomc.domain.Categoria;
 import com.alexmoscato.cursomc.dtos.CategoriaDTO;
 import com.alexmoscato.cursomc.repositories.CategoriaRepository;
-import com.alexmoscato.cursomc.services.exceptions.*;
+import com.alexmoscato.cursomc.services.exceptions.DataIntegrityException;
+import com.alexmoscato.cursomc.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class CategoriaService {
