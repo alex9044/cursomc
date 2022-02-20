@@ -1,26 +1,66 @@
 package com.alexmoscato.cursomc.services;
 
+import java.util.Date;
+import java.util.Iterator;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alexmoscato.cursomc.domain.ItemPedido;
+import com.alexmoscato.cursomc.domain.PagamentoComBoleto;
 import com.alexmoscato.cursomc.domain.Pedido;
+import com.alexmoscato.cursomc.domain.enums.EstadoPagamento;
+import com.alexmoscato.cursomc.repositories.ItemPedidoRepository;
+import com.alexmoscato.cursomc.repositories.PagamentoRepository;
 import com.alexmoscato.cursomc.repositories.PedidoRepository;
 import com.alexmoscato.cursomc.services.exceptions.*;
 
 @Service
 public class PedidoService {
-	
+
 	@Autowired
 	private PedidoRepository repository;
-	
-	//Method para buscar uma categoria por Id.
-	public Pedido findId(Integer id){
-		Optional<Pedido> objeto = repository.findById(id); 
-		
-		return objeto.orElseThrow(() -> 
-			new ObjectNotFoundException("Objeto não encontrado! ID:"+id+", tipo: " +Pedido.class.getName()));
-	} 
-	
+
+	@Autowired
+	private BoletoService boletoService;
+
+	@Autowired
+	private PagamentoRepository pagamentoRepository;
+
+	@Autowired
+	private ProdutoService produtoService;
+
+	@Autowired
+	private ItemPedidoRepository itemPedidoRepository;
+
+	// Method para buscar um pedido por Id.
+	public Pedido findId(Integer id) {
+		Optional<Pedido> objeto = repository.findById(id);
+		return objeto.orElseThrow(() -> new ObjectNotFoundException(
+				"Objeto não encontrado! ID:" + id + ", tipo: " + Pedido.class.getName()));
+	}
+
+	// Metodo para inserir um novo pedido
+	public Pedido insert(Pedido obj) {
+		obj.setId(null);
+		obj.setInstante(new Date());
+		obj.getPagamento().setEstado(EstadoPagamento.PENDENTE);
+		obj.getPagamento().setPedido(obj);
+		if (obj.getPagamento() instanceof PagamentoComBoleto) {
+			
+			
+			PagamentoComBoleto pagto = (PagamentoComBoleto) obj.getPagamento();
+			boletoService.preencherPagamentoComBoleto(pagto, obj.getInstante());
+		}
+		obj = repository.save(obj);
+		pagamentoRepository.save(obj.getPagamento());
+		for (ItemPedido ip : obj.getItens()) {
+			ip.setDesconto(0.00);
+			ip.setPreco(produtoService.findId(obj.getId()).getPreco());
+			ip.setPedido(obj);
+		}
+		itemPedidoRepository.saveAll(obj.getItens());
+		return obj;
+	}
 }
