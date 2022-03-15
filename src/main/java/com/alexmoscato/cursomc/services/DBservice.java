@@ -20,6 +20,7 @@ import com.alexmoscato.cursomc.domain.PagamentoComCartao;
 import com.alexmoscato.cursomc.domain.Pedido;
 import com.alexmoscato.cursomc.domain.Produto;
 import com.alexmoscato.cursomc.domain.enums.EstadoPagamento;
+import com.alexmoscato.cursomc.domain.enums.Perfis;
 import com.alexmoscato.cursomc.domain.enums.TipoCliente;
 import com.alexmoscato.cursomc.repositories.CategoriaRepository;
 import com.alexmoscato.cursomc.repositories.CidadeRepository;
@@ -114,16 +115,24 @@ public class DBservice {
 
 		// Instanciando objetos Clientes
 		Cliente cli1 = new Cliente(null, "Maria Silva", "trabalhoalex9044@gmail.com", "521486325798", TipoCliente.PESSOA_FISICA, pe.encode("123"));
+		Cliente cli2 = new Cliente(null, "Theilor Costa", "deunertraude@gmail.com", "75369532087", TipoCliente.PESSOA_FISICA, pe.encode("123"));
 
+		// Adicionando perfil aos clientes
+		cli2.addPerfil(Perfis.ADMIN);
+		
+		
 		// Adicionando telefones aos clientes
 		cli1.getTelefones().addAll(Arrays.asList("521463285", "451632548"));
+		cli2.getTelefones().addAll(Arrays.asList("999853285", "999452548"));
 
 		// Instanciando objetos Endereços
 		Endereco e1 = new Endereco(null, "Rua flores ", "300", "apto 300", "Jardim", "38220834", cli1, cid1);
 		Endereco e2 = new Endereco(null, "Avenida mattos", "102", "Sala 800", "Centro", "61151311", cli1, cid2);
+		Endereco e3 = new Endereco(null, "Avenida Republica", "1024", null, "Centro", "61151311", cli2, cid2);
 
 		// Adicionando enderecos aos clientes
 		cli1.getEnderecos().addAll(Arrays.asList(e1, e2));
+		cli2.getEnderecos().addAll(Arrays.asList(e3));
 
 		// Salvando Categorias no repositorio
 		categoriaRepository.saveAll(Arrays.asList(cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8));
@@ -134,7 +143,7 @@ public class DBservice {
 		// Salvandp Cidades no repositorio
 		cidadeRepository.saveAll(Arrays.asList(cid1, cid2, cid3));
 		// Salvando Clientes no repositorio
-		clienteRepository.saveAll(Arrays.asList(cli1));
+		clienteRepository.saveAll(Arrays.asList(cli1,cli2));
 		// Salvando Enderecos no repositorio
 		enderecoRepository.saveAll(Arrays.asList(e1, e2));
 
