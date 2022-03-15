@@ -110,7 +110,7 @@ public class DBservice {
 		Cidade cid3 = new Cidade(null, "Capinas", est2);
 
 		// Instanciando objetos Clientes
-		Cliente cli1 = new Cliente(null, "Maria Silva", "maria3gmail.com", "521486325798", TipoCliente.PESSOA_FISICA);
+		Cliente cli1 = new Cliente(null, "Maria Silva", "trabalhoalex9044@gmail.com", "521486325798", TipoCliente.PESSOA_FISICA);
 
 		// Adicionando telefones aos clientes
 		cli1.getTelefones().addAll(Arrays.asList("521463285", "451632548"));
